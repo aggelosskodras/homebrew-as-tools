@@ -5,6 +5,10 @@ No Python, Node.js, or GitHub account required — `brew install` handles everyt
 
 **Only prerequisite:** [Homebrew](https://brew.sh) installed on the Mac.
 
+> **Source:** [`lcaneparo/AS_Script`](https://github.com/lcaneparo/AS_Script) (branch `pluto`)
+> **Homebrew tap:** [`aggelosskodras/homebrew-as-tools`](https://github.com/aggelosskodras/homebrew-as-tools)
+> **Current release:** [v0.1.0](https://github.com/aggelosskodras/homebrew-as-tools/releases/tag/v0.1.0)
+
 ---
 
 ## Table of Contents
