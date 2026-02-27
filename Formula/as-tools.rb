@@ -5,14 +5,15 @@
 class AsTools < Formula
   desc "Pathology lab workflow tools: filter, assign, unmatch, consult, dashboard & more"
   homepage "https://github.com/aggelosskodras/homebrew-as-tools"
-  url "https://github.com/aggelosskodras/homebrew-as-tools/releases/download/v0.1.0/as-tools-0.1.0.tar.gz"
-  sha256 "eddf6682ca239dd816b13c180ee3ed9ad593eb9fef1a0d751f8140508321c8c5"
+  url "https://github.com/aggelosskodras/homebrew-as-tools/releases/download/v0.2.0/as-tools-0.2.0.tar.gz"
+  sha256 "4acb5771380556af077ebb6b11c938919caa31591ff101d86fbe9f10253c4f91"
   license "MIT"
-  version "0.1.0"
+  version "0.2.0"
 
   depends_on "python@3.12"
   depends_on "node"
-  depends_on "tcl-tk"
+  # tcl-tk only needed if users_create uses tkinter file picker on first run
+  depends_on "tcl-tk" => :recommended
 
   def install
     # ---------------------------------------------------------------
@@ -32,12 +33,6 @@ class AsTools < Formula
         entry: "filter_push_tui.py",
         cli_args: "",
       },
-      "slide_labeler" => {
-        dir: "slide_labeler",
-        deps: %w[boto3 botocore requests click PyYAML Pillow qrcode psycopg2-binary],
-        entry: "-m labeler.cli --auto",
-        cli_args: "",
-      },
       "unmatch" => {
         dir: "unmatch",
         deps: %w[textual],
@@ -50,16 +45,16 @@ class AsTools < Formula
         entry: "-m streamlit run Home.py",
         cli_args: "--server.port 8501",
       },
-      "users_creation" => {
-        dir: "users_creation/user-creation",
-        deps: %w[requests pandas customtkinter],
-        entry: "src/cli.py",
+      "users_create" => {
+        dir: "users_create",
+        deps: %w[pandas requests openpyxl],
+        entry: "AS-Create-Users-AP-Dx.py",
         cli_args: "",
       },
-      "users_creation_gui" => {
-        dir: "users_creation/user-creation",
-        deps: %w[requests pandas customtkinter],
-        entry: "src/gui.py",
+      "users_create_LS" => {
+        dir: "users_create_LS/user-creation",
+        deps: %w[requests pandas],
+        entry: "src/cli.py",
         cli_args: "",
       },
       "dashboard" => {
@@ -182,8 +177,8 @@ class AsTools < Formula
 
          Then set "AS-Dark" as default in Terminal → Settings → Profiles.
 
-      Available commands: filter, slide_labeler, assign, unmatch,
-        consult, lis, users_creation, users_creation_gui, dashboard
+      Available commands: filter, assign, unmatch, consult,
+        lis, users_create, users_create_LS, dashboard
     EOS
   end
 

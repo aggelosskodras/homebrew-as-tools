@@ -58,7 +58,7 @@ brew tap aggelosskodras/as-tools
 
 ### Step 3 — Install AS Tools
 
-This single command installs Python 3.12, Node.js, Tcl/Tk, all 8 tools, and creates
+This single command installs Python 3.12, Node.js, all 8 tools, and creates
 isolated virtual environments for each Python tool:
 
 ```bash
@@ -122,9 +122,8 @@ ANSI palette optimised for syntax highlighting in terminal tools.
 |-----------|------|-----|
 | `python@3.12` | Python 3.12 runtime | Runs 6 of the 8 tools |
 | `node` | Node.js runtime | Runs assign (Case Orchestrator) and lis (LIS Mock) |
-| `tcl-tk` | Tcl/Tk GUI framework | Required by users_creation GUI |
 | 6 Python venvs | Isolated virtual environments | One per Python tool, each with its own pip dependencies |
-| 9 wrapper scripts | Executables in Homebrew's `bin/` | `filter`, `slide_labeler`, `assign`, `unmatch`, `consult`, `lis`, `users_creation`, `users_creation_gui`, `dashboard` |
+| 8 wrapper scripts | Executables in Homebrew's `bin/` | `filter`, `assign`, `unmatch`, `consult`, `lis`, `users_create`, `users_create_LS`, `dashboard` |
 | `as-tools` | Help command | Lists all commands with descriptions |
 | `as-tools-theme` | Theme importer | Imports the AS-Dark Terminal.app profile |
 | `as-tools.sh` | Shell integration | Sourced from `~/.zshrc` for help command and functions |
@@ -142,13 +141,12 @@ After installation, these commands are available system-wide from any Terminal w
 | Command | Tool | Type | Port |
 |---------|------|------|------|
 | `filter` | Filter Push TUI | Terminal UI | — |
-| `slide_labeler` | Slide Labeler | CLI | — |
 | `assign` | Case Orchestrator | Web UI | 3002 |
 | `unmatch` | Unmatch Images TUI | Terminal UI | — |
 | `consult` | ConsultHub | Web UI (Streamlit) | 8501 |
 | `lis` | LIS Mock Server | Web server | 3000 |
-| `users_creation` | User Creation | CLI | — |
-| `users_creation_gui` | User Creation | Desktop GUI | — |
+| `users_create` | User Creation (AP-Dx) | Interactive CLI | — |
+| `users_create_LS` | User Creation (LS) | CLI | — |
 | `dashboard` | Pathology Audit Dashboard | Web UI (Streamlit) | 8502 |
 
 Plus two utility commands:
@@ -173,20 +171,6 @@ filter --help       # show options
 
 **Runtime:** Python 3.12 + Textual
 **Dependencies:** textual, requests
-
----
-
-### `slide_labeler` — Slide Labeler
-
-Batch-label slides with QR codes and metadata via S3/Concentriq.
-
-```bash
-slide_labeler           # launch with auto mode
-slide_labeler --help    # show options
-```
-
-**Runtime:** Python 3.12 + Click
-**Dependencies:** boto3, botocore, requests, click, PyYAML, Pillow, qrcode, psycopg2-binary
 
 ---
 
@@ -252,29 +236,32 @@ Press `Ctrl+C` to stop the server.
 
 ---
 
-### `users_creation` — User Creation (CLI)
+### `users_create` — User Creation (AP-Dx)
 
-Batch-create Concentriq LS users from spreadsheets, command-line interface.
+Batch-create Concentriq AP-Dx users from CSV or Excel files.
+Interactive — prompts for server URL, authentication, and file selection.
 
 ```bash
-users_creation          # launch CLI
-users_creation --help   # show options
+users_create            # launch (interactive prompts)
 ```
 
 **Runtime:** Python 3.12
-**Dependencies:** requests, pandas, customtkinter
+**Dependencies:** pandas, requests, openpyxl
 
 ---
 
-### `users_creation_gui` — User Creation (GUI)
+### `users_create_LS` — User Creation (LS)
 
-Same as `users_creation` but with a graphical desktop interface (CustomTkinter).
+Batch-create Concentriq LS users from CSV files.
 
 ```bash
-users_creation_gui      # launch GUI window
+users_create_LS             # launch CLI
+users_create_LS --help      # show options
+users_create_LS --dry-run   # preview without changes
 ```
 
-**Runtime:** Python 3.12 + CustomTkinter + Tcl/Tk
+**Runtime:** Python 3.12
+**Dependencies:** requests, pandas
 
 ---
 
@@ -343,12 +330,11 @@ everything works:
 as-tools
 
 # 2. All commands are on PATH
-which filter slide_labeler assign unmatch consult lis users_creation users_creation_gui dashboard
+which filter assign unmatch consult lis users_create users_create_LS dashboard
 
 # 3. Python tools respond to --help
 filter --help
-slide_labeler --help
-users_creation --help
+users_create_LS --help
 
 # 4. Runtimes installed
 python3.12 --version
@@ -374,13 +360,15 @@ filter          # opens TUI in current terminal
 unmatch         # opens TUI in current terminal
 ```
 
-### CLI tools (slide_labeler, users_creation)
+### CLI tools (users_create, users_create_LS)
 
-These run as standard command-line programs. Use `--help` for options.
+`users_create` is interactive — it prompts for server URL and credentials.
+`users_create_LS` is a standard CLI with `--help` support.
 
 ```bash
-slide_labeler --help
-users_creation --help
+users_create                # interactive prompts
+users_create_LS --help      # show options
+users_create_LS --dry-run   # preview without changes
 ```
 
 ### Web-based tools (assign, consult, lis, dashboard)
@@ -393,14 +381,6 @@ assign          # http://localhost:3002
 consult         # http://localhost:8501
 lis             # http://localhost:3000
 dashboard       # http://localhost:8502
-```
-
-### GUI tools (users_creation_gui)
-
-Opens a native desktop window.
-
-```bash
-users_creation_gui
 ```
 
 ---
@@ -494,7 +474,7 @@ ls -la "$(brew --prefix)/bin/filter"
 # Should show -rwxr-xr-x permissions
 
 # If needed, fix permissions
-chmod +x "$(brew --prefix)/bin/"filter slide_labeler assign unmatch consult lis users_creation users_creation_gui dashboard
+chmod +x "$(brew --prefix)/bin/"filter assign unmatch consult lis users_create users_create_LS dashboard
 ```
 
 ### Streamlit tools show a blank page
@@ -528,13 +508,12 @@ SETUP (one-time)
 DAILY USE
   as-tools                  show help
   filter                    push filters (TUI)
-  slide_labeler             label slides (CLI)
   assign                    assign cases (web :3002)
   unmatch                   unmatch images (TUI)
   consult                   consultation hub (web :8501)
   lis                       LIS mock server (web :3000)
-  users_creation            create users (CLI)
-  users_creation_gui        create users (GUI)
+  users_create              create AP-Dx users (interactive)
+  users_create_LS           create LS users (CLI)
   dashboard                 audit dashboard (web :8502)
 
 MAINTENANCE
