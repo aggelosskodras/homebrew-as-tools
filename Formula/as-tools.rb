@@ -3,12 +3,12 @@
 # Homebrew formula for AS Tools
 # Install: brew tap aggelosskodras/as-tools && brew install as-tools
 class AsTools < Formula
-  desc "Pathology lab workflow tools: filter, assign, unmatch, consult, dashboard & more"
+  desc "Pathology lab workflow tools: filter, assign, unmatch, consult, udf & more"
   homepage "https://github.com/aggelosskodras/homebrew-as-tools"
-  url "https://github.com/aggelosskodras/homebrew-as-tools/releases/download/v0.2.0/as-tools-0.2.0.tar.gz"
-  sha256 "4acb5771380556af077ebb6b11c938919caa31591ff101d86fbe9f10253c4f91"
+  url "https://github.com/aggelosskodras/homebrew-as-tools/releases/download/v0.3.0/as-tools-0.3.0.tar.gz"
+  sha256 "5fbabbe3975a167622f2660b804b223252d4f8bf1f65c092bc5e1186f620d8c7"
   license "MIT"
-  version "0.2.0"
+  version "0.3.0"
 
   depends_on "python@3.12"
   depends_on "node"
@@ -29,7 +29,7 @@ class AsTools < Formula
     python_tools = {
       "filter" => {
         dir: "filter",
-        deps: %w[textual requests],
+        deps: %w[textual requests urllib3],
         entry: "filter_push_tui.py",
         cli_args: "",
       },
@@ -53,15 +53,21 @@ class AsTools < Formula
       },
       "users_create_LS" => {
         dir: "users_create_LS/user-creation",
-        deps: %w[requests pandas],
+        deps: %w[requests pandas customtkinter],
         entry: "src/cli.py",
         cli_args: "",
       },
-      "dashboard" => {
-        dir: "dashboard",
-        deps: %w[streamlit duckdb pandas pyarrow plotly],
-        entry: "-m streamlit run dashboard/app.py",
-        cli_args: "--server.port 8502",
+      "udf" => {
+        dir: "udf",
+        deps: %w[textual],
+        entry: "udf_manager_tui.py",
+        cli_args: "",
+      },
+      "ai_label_fix" => {
+        dir: "ai_label_fix",
+        deps: %w[textual],
+        entry: "proscia_ai_label_fixer.py",
+        cli_args: "",
       },
     }
 
@@ -178,7 +184,7 @@ class AsTools < Formula
          Then set "AS-Dark" as default in Terminal → Settings → Profiles.
 
       Available commands: filter, assign, unmatch, consult,
-        lis, users_create, users_create_LS, dashboard
+        lis, users_create, users_create_LS, udf, ai_label_fix
     EOS
   end
 
