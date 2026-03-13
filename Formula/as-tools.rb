@@ -5,10 +5,10 @@
 class AsTools < Formula
   desc "Pathology lab workflow tools: filter, assign, unmatch, consult, udf & more"
   homepage "https://github.com/aggelosskodras/homebrew-as-tools"
-  url "https://github.com/aggelosskodras/homebrew-as-tools/releases/download/v0.3.0/as-tools-0.3.0.tar.gz"
-  sha256 "5fbabbe3975a167622f2660b804b223252d4f8bf1f65c092bc5e1186f620d8c7"
+  url "https://github.com/aggelosskodras/homebrew-as-tools/releases/download/v0.3.1/as-tools-0.3.1.tar.gz"
+  sha256 "d8c8236932e4a3fa51c5fec29705a9458781ed081d8192dfe8c1d6fedab0211c"
   license "MIT"
-  version "0.3.0"
+  version "0.3.1"
 
   depends_on "python@3.12"
   depends_on "node"
@@ -69,6 +69,12 @@ class AsTools < Formula
         entry: "proscia_ai_label_fixer.py",
         cli_args: "",
       },
+      "users_update_LS" => {
+        dir: "users_create_LS/user-update",
+        deps: %w[requests pandas urllib3],
+        entry: "src/cli.py",
+        cli_args: "",
+      },
     }
 
     python_tools.each do |cmd, spec|
@@ -81,12 +87,23 @@ class AsTools < Formula
       system venv_pip, "install", "--quiet", "--upgrade", "pip"
       system venv_pip, "install", "--quiet", *spec[:deps] unless spec[:deps].empty?
 
-      # Generate wrapper script
+      # Generate wrapper script with --man support
       venv_python = venv_dir/"bin/python"
       (bin/cmd).write <<~BASH
         #!/usr/bin/env bash
         # AS Tools wrapper: #{cmd}
-        cd "#{tool_dir}" || exit 1
+        TOOL_DIR="#{tool_dir}"
+        if [ "$1" = "--man" ] || [ "$1" = "man" ]; then
+          for f in "$TOOL_DIR/README.md" "$TOOL_DIR"/*/README.md; do
+            if [ -f "$f" ]; then
+              less "$f" 2>/dev/null || cat "$f"
+              exit 0
+            fi
+          done
+          echo "No manual available for #{cmd}" >&2
+          exit 1
+        fi
+        cd "$TOOL_DIR" || exit 1
         exec "#{venv_python}" #{spec[:entry]} #{spec[:cli_args]} "$@"
       BASH
       chmod 0755, bin/cmd
@@ -106,6 +123,16 @@ class AsTools < Formula
       #!/usr/bin/env bash
       # AS Tools wrapper: assign (Case Orchestrator)
       TOOL_DIR="#{libexec}/assign"
+      if [ "$1" = "--man" ] || [ "$1" = "man" ]; then
+        for f in "$TOOL_DIR/README.md" "$TOOL_DIR"/*/README.md; do
+          if [ -f "$f" ]; then
+            less "$f" 2>/dev/null || cat "$f"
+            exit 0
+          fi
+        done
+        echo "No manual available for assign" >&2
+        exit 1
+      fi
       if [ -f "$TOOL_DIR/assign.sh" ]; then
         cd "$TOOL_DIR" && exec bash assign.sh "$@"
       else
@@ -119,6 +146,16 @@ class AsTools < Formula
       #!/usr/bin/env bash
       # AS Tools wrapper: lis (LIS Mock Server)
       TOOL_DIR="#{libexec}/lis"
+      if [ "$1" = "--man" ] || [ "$1" = "man" ]; then
+        for f in "$TOOL_DIR/README.md" "$TOOL_DIR"/*/README.md; do
+          if [ -f "$f" ]; then
+            less "$f" 2>/dev/null || cat "$f"
+            exit 0
+          fi
+        done
+        echo "No manual available for lis" >&2
+        exit 1
+      fi
       echo "Starting LIS Mock Server on http://localhost:3000 ..."
       cd "$TOOL_DIR" && exec node server.js "$@"
     BASH
@@ -136,9 +173,13 @@ class AsTools < Formula
     # ---------------------------------------------------------------
     (bin/"as-tools").write <<~BASH
       #!/usr/bin/env bash
-      # AS Tools — master help command
+      # AS Tools — master help / manual command
       source "#{share}/as-tools/as-tools.sh"
-      __as_tools_help
+      if [ "$1" = "help" ] && [ -n "$2" ]; then
+        __as_tools_man "$2"
+      else
+        __as_tools_help
+      fi
     BASH
     chmod 0755, bin/"as-tools"
 
@@ -184,7 +225,11 @@ class AsTools < Formula
          Then set "AS-Dark" as default in Terminal → Settings → Profiles.
 
       Available commands: filter, assign, unmatch, consult,
-        lis, users_create, users_create_LS, udf, ai_label_fix
+        lis, users_create, users_create_LS, users_update_LS,
+        udf, ai_label_fix
+
+      View any tool's manual:  <command> --man
+                                as-tools help <command>
     EOS
   end
 
