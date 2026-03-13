@@ -5,10 +5,10 @@
 class AsTools < Formula
   desc "Pathology lab workflow tools: filter, assign, unmatch, consult, udf & more"
   homepage "https://github.com/aggelosskodras/homebrew-as-tools"
-  url "https://github.com/aggelosskodras/homebrew-as-tools/releases/download/v0.3.1/as-tools-0.3.1.tar.gz"
-  sha256 "d8c8236932e4a3fa51c5fec29705a9458781ed081d8192dfe8c1d6fedab0211c"
+  url "https://github.com/aggelosskodras/homebrew-as-tools/releases/download/v0.3.2/as-tools-0.3.2.tar.gz"
+  sha256 "fb9cab7a5b7a0f0f2c7d8f07795b8e5ce4ea98fa229c1a32d2218f72ec11977b"
   license "MIT"
-  version "0.3.1"
+  version "0.3.2"
 
   depends_on "python@3.12"
   depends_on "node"
