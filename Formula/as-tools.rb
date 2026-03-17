@@ -5,15 +5,13 @@
 class AsTools < Formula
   desc "Pathology lab workflow tools: filter, assign, unmatch, consult, udf & more"
   homepage "https://github.com/aggelosskodras/homebrew-as-tools"
-  url "https://github.com/aggelosskodras/homebrew-as-tools/releases/download/v0.3.3/as-tools-0.3.3.tar.gz"
-  sha256 "31d3d9e10b324a725d16688fcd0f4fe1f09595c60cebcf83966e9bbc4e784332"
+  url "https://github.com/aggelosskodras/homebrew-as-tools/releases/download/v0.3.4/as-tools-0.3.4.tar.gz"
+  sha256 "07f4ab314954e0a737e60e77b8d73364ef119510aef309c0036bce59b63de6ef"
   license "MIT"
-  version "0.3.3"
+  version "0.3.4"
 
   depends_on "python@3.12"
   depends_on "node"
-  # tcl-tk only needed if users_create uses tkinter file picker on first run
-  depends_on "tcl-tk" => :recommended
 
   def install
     # ---------------------------------------------------------------
