@@ -5,10 +5,10 @@
 class AsTools < Formula
   desc "Pathology lab workflow tools: filter, assign, unmatch, consult, udf & more"
   homepage "https://github.com/aggelosskodras/homebrew-as-tools"
-  url "https://github.com/aggelosskodras/homebrew-as-tools/releases/download/v0.3.5/as-tools-0.3.5.tar.gz"
-  sha256 "f27cb6059555df473ab90bb2ffc842f57ece8fc8a7db5466e3ad52148f4b5cba"
+  url "https://github.com/aggelosskodras/homebrew-as-tools/releases/download/v0.3.6/as-tools-0.3.6.tar.gz"
+  sha256 "e1cf3ca044425cfa4c37f49aaed4dc714fc97e1422f632149192a58651ca0048"
   license "MIT"
-  version "0.3.5"
+  version "0.3.6"
 
   depends_on "python@3.12"
   depends_on "node"
@@ -43,16 +43,10 @@ class AsTools < Formula
         entry: "-m streamlit run Home.py",
         cli_args: "--server.port 8501",
       },
-      "users_create" => {
-        dir: "users_create",
-        deps: %w[pandas requests openpyxl],
-        entry: "AS-Create-Users-AP-Dx.py",
-        cli_args: "",
-      },
-      "users_create_LS" => {
-        dir: "users_create_LS/user-creation",
-        deps: %w[requests pandas customtkinter],
-        entry: "src/cli.py",
+      "usersLS" => {
+        dir: "usersLS",
+        deps: %w[textual requests],
+        entry: "ls_user_manager.py",
         cli_args: "",
       },
       "udf" => {
@@ -65,12 +59,6 @@ class AsTools < Formula
         dir: "ai_label_fix",
         deps: %w[textual],
         entry: "proscia_ai_label_fixer.py",
-        cli_args: "",
-      },
-      "users_update_LS" => {
-        dir: "users_create_LS/user-update",
-        deps: %w[requests pandas urllib3],
-        entry: "src/cli.py",
         cli_args: "",
       },
     }
@@ -223,8 +211,7 @@ class AsTools < Formula
          Then set "AS-Dark" as default in Terminal → Settings → Profiles.
 
       Available commands: filter, assign, unmatch, consult,
-        lis, users_create, users_create_LS, users_update_LS,
-        udf, ai_label_fix
+        lis, usersLS, udf, ai_label_fix
 
       View any tool's manual:  <command> --man
                                 as-tools help <command>
