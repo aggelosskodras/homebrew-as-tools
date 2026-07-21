@@ -5,10 +5,10 @@
 class AsTools < Formula
   desc "Pathology lab workflow tools: filter, assign, unmatch, consult, udf & more"
   homepage "https://github.com/aggelosskodras/homebrew-as-tools"
-  url "https://github.com/aggelosskodras/homebrew-as-tools/releases/download/v0.4.0/as-tools-0.4.0.tar.gz"
-  sha256 "45b207a4713d8012e4846215be54e0dbb9b8016a86f505171075262096de0580"
+  url "https://github.com/aggelosskodras/homebrew-as-tools/releases/download/v0.3.7/as-tools-0.3.7.tar.gz"
+  sha256 "a95a1b0f8864e750f9bdd1637e856b632332dcaf4b5d79fc468c55bc2003c01d"
   license "MIT"
-  version "0.4.0"
+  version "0.3.7"
 
   depends_on "python@3.12"
   depends_on "node"
@@ -146,44 +146,6 @@ class AsTools < Formula
       cd "$TOOL_DIR" && exec node server.js "$@"
     BASH
     chmod 0755, bin/"lis"
-
-    # ---------------------------------------------------------------
-    # ls-maestro — bash launcher that execs `claude` in LS-Maestro/
-    # ---------------------------------------------------------------
-    # Special: not a Python entry-point tool, but needs a Python venv with
-    # `requests` so the identity preflight in the launcher script works.
-    ls_maestro_dir = libexec/"ls-maestro"
-    ls_maestro_venv = ls_maestro_dir/".brew_venv"
-    system python, "-m", "venv", ls_maestro_venv
-    system ls_maestro_venv/"bin/pip", "install", "--quiet", "--upgrade", "pip"
-    system ls_maestro_venv/"bin/pip", "install", "--quiet", "requests"
-    # Generate the brewed wrapper. Honors LS_MAESTRO_DIR if the user wants
-    # to point at a live checkout instead of the brewed copy.
-    (bin/"ls-maestro").write <<~BASH
-      #!/usr/bin/env bash
-      # AS Tools wrapper: ls-maestro (Concentriq LS coordinator)
-      DEFAULT_DIR="#{ls_maestro_dir}"
-      export MAESTRO_PYTHON="#{ls_maestro_venv}/bin/python"
-      # User override: LS_MAESTRO_DIR pins a different checkout (great for
-      # iterating on the kit without reinstalling the brew package).
-      if [ -n "${LS_MAESTRO_DIR:-}" ]; then
-        TARGET="$LS_MAESTRO_DIR"
-      else
-        TARGET="$DEFAULT_DIR"
-      fi
-      if [ "$1" = "--man" ] || [ "$1" = "man" ]; then
-        for f in "$TARGET/README.md" "$TARGET"/*/README.md; do
-          if [ -f "$f" ]; then
-            less "$f" 2>/dev/null || cat "$f"
-            exit 0
-          fi
-        done
-        echo "No manual available for ls-maestro" >&2
-        exit 1
-      fi
-      exec "$TARGET/bin/ls-maestro" "$@"
-    BASH
-    chmod 0755, bin/"ls-maestro"
 
     # ---------------------------------------------------------------
     # 4. Shell integration + theme -> share/
